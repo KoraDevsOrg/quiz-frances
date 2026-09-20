@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aprende Francés - Kora Français</title>
+  
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f1115" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
+  <link rel="stylesheet" href="css/styles.css?v=1.0" />
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR -->
+  <header class="app-bar">
+    <button class="btn-drawer-toggle" id="btnOpenDrawer" aria-label="Abrir menú">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <div class="app-title">
+      <span class="app-logo">🥐</span>
+      <h1 id="currentSectionTitle">Cuestionario</h1>
+    </div>
+    <div class="app-quick-stats">
+      <span id="headerStreakText">0 🔥</span>
+    </div>
+  </header>
+
+  <!-- MENÚ LATERAL RETRÁCTIL -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <aside class="side-drawer" id="sideDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="drawer-brand">
+        <span class="drawer-logo">🇫🇷</span>
+        <div>
+          <h2>Kora Français</h2>
+          <p>Pratique du vocabulaire</p>
+        </div>
+      </div>
+      <button class="btn-drawer-close" id="btnCloseDrawer" aria-label="Cerrar menú">✕</button>
+    </div>
+
+    <nav class="drawer-nav">
+      <button class="drawer-item active" data-target="quiz">
+        <span class="drawer-icon">🌟</span>
+        <div class="drawer-info">
+          <span class="drawer-label">Cuestionario</span>
+          <span class="drawer-sub">Preguntas de opción múltiple</span>
+        </div>
+      </button>
+
+      <button class="drawer-item" data-target="wordsearch">
+        <span class="drawer-icon">🔍</span>
+        <div class="drawer-info">
+          <span class="drawer-label">Sopa de Letras</span>
+          <span class="drawer-sub">Busca palabras en francés</span>
+        </div>
+      </button>
+
+      <button class="drawer-item" data-target="memory">
+        <span class="drawer-icon">🎴</span>
+        <div class="drawer-info">
+          <span class="drawer-label">Parejas de Memoria</span>
+          <span class="drawer-sub">Tarjetas interactivas 3D</span>
+        </div>
+      </button>
+
+      <button class="drawer-item" data-target="scramble">
+        <span class="drawer-icon">🧩</span>
+        <div class="drawer-info">
+          <span class="drawer-label">Anagrama</span>
+          <span class="drawer-sub">Ordena las letras / sílabas</span>
+        </div>
+      </button>
+
+      <button class="drawer-item" data-target="timeattack">
+        <span class="drawer-icon">⏱️</span>
+        <div class="drawer-info">
+          <span class="drawer-label">Contrarreloj (60s)</span>
+          <span class="drawer-sub">Desafío rápido de velocidad</span>
+        </div>
+      </button>
+
+      <button class="drawer-item" data-target="achievements">
+        <span class="drawer-icon">🏅</span>
+        <div class="drawer-info">
+          <span class="drawer-label">Medallas y Logros</span>
+          <span class="drawer-sub">Tus metas conseguidas</span>
+        </div>
+      </button>
+    </nav>
+
+    <div class="drawer-footer">
+      <p>Nivel Français A1/A2 • Bilingüe</p>
+    </div>
+  </aside>
+
+  <!-- TOAST DE LOGRO -->
+  <div class="achievement-toast" id="achievementToast" aria-live="assertive">
+    <span class="toast-icon" id="toastIcon">🏅</span>
+    <div class="toast-content">
+      <div class="toast-tag">¡LOGRO DESBLOQUEADO!</div>
+      <div class="toast-title" id="toastTitle">Nombre del Logro</div>
+    </div>
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <section class="stats-bar" aria-label="Estadísticas">
+    <div class="stat-item">Aciertos: <span id="scoreText">0</span></div>
+    <div class="stat-item">Racha: <span id="streakText">0 🔥</span></div>
+    <div class="stat-item">Récord: <span id="bestStreakText">0 🏆</span></div>
+    <div class="stat-item">Banco: <span id="vocabCount">0 📚</span></div>
+    <button id="btnResetStats" class="btn-icon" title="Reiniciar">↺</button>
+  </section>
+
+  <main class="container">
+    <!-- CUESTIONARIO -->
+    <section class="quiz-card module-section" id="quizSection">
+      <div class="quiz-toolbar">
+        <div class="toolbar-item">
+          <label for="categorySelect">Categoría:</label>
+          <select id="categorySelect" class="styled-select">
+            <option value="all">Todas las categorías</option>
+            <option value="verbo">Verbos</option>
+            <option value="comida">Comida y Bebida</option>
+            <option value="animal">Animales</option>
+            <option value="objeto">Objetos</option>
+            <option value="lugar">Lugares</option>
+            <option value="persona">Personas y Familia</option>
+            <option value="adjetivo">Adjetivos</option>
+            <option value="tiempo">Tiempo y Naturaleza</option>
+            <option value="frase">Frases y Preguntas</option>
+          </select>
+        </div>
+
+        <div class="toolbar-item">
+          <label for="modeSelect">Modo:</label>
+          <select id="modeSelect" class="styled-select">
+            <option value="fr-es">🇫🇷 ➔ 🇪🇸 / 🇬🇧</option>
+            <option value="es-fr">🇪🇸 / 🇬🇧 ➔ 🇫🇷</option>
+            <option value="mixed">🔀 Mixto</option>
+          </select>
+        </div>
+
+        <button id="btnTogglePhonetic" class="toggle-phonetic-btn" title="Ocultar/Mostrar Fonética">
+          🗣️ Fonética: <span id="phoneticStatus">ON</span>
+        </button>
+
+        <button id="btnReviewMistakes" class="btn-review" title="Repasar falladas">
+          ⚠️ Repaso (<span id="mistakesCount">0</span>)
+        </button>
+      </div>
+
+      <div id="reviewBanner" class="review-badge-banner">
+        ⚠️ <b>Modo Repaso Activo:</b> Practicando palabras con errores previos.
+      </div>
+
+      <div class="question-header">
+        <span class="star-icon" aria-hidden="true">🌟</span>
+        <div>
+          <h2 class="question-title" id="questionTitleContainer"></h2>
+          <button class="audio-btn" id="btnPlayAudio">🔊 Écouter la prononciation</button>
+        </div>
+      </div>
+
+      <div class="options-list" id="optionsContainer" role="group"></div>
+
+      <div class="explanation-box" id="explanationBox" aria-live="polite">
+        <div class="exp-status" id="expStatus"></div>
+        <div class="exp-body" id="expBody"></div>
+      </div>
+
+      <button class="action-btn" id="nextBtn" style="display: none;">Question suivante ➔</button>
+    </section>
+
+    <!-- SOPA DE LETRAS -->
+    <section class="wordsearch-card module-section" id="wsSection" style="display: none;">
+      <h3>🔍 Mots Mêlés (Sopa de Letras)</h3>
+      <p class="section-desc">Toca las letras en orden (horizontal o vertical) para formar las palabras.</p>
+
+      <div class="grid-container" id="wsGrid"></div>
+
+      <h4>Palabras por encontrar:</h4>
+      <div class="word-targets" id="wsTargets"></div>
+
+      <button class="action-btn" id="btnResetWS" style="margin-top: 18px;">
+        🔄 Nouvelle grille
+      </button>
+    </section>
+
+    <!-- MEMORIA -->
+    <section class="memory-card-section module-section" id="memorySection" style="display: none;">
+      <div class="memory-header">
+        <div>
+          <h3>🎴 Jeu de Mémoire</h3>
+          <p class="section-desc">Encuentra los pares entre el francés y su traducción.</p>
+        </div>
+        <div class="memory-moves">Intentos: <span id="memoryMovesCount">0</span></div>
+      </div>
+
+      <div class="memory-grid" id="memoryGrid"></div>
+
+      <button class="action-btn" id="btnResetMemory" style="margin-top: 18px;">
+        🔄 Nouvelle partie
+      </button>
+    </section>
+
+    <!-- ANAGRAMA -->
+    <section class="scramble-section module-section" id="scrambleSection" style="display: none;">
+      <div class="scramble-header">
+        <div>
+          <h3>🧩 Mot en Désordre</h3>
+          <p class="section-desc">Toca las letras en el orden correcto para escribir la palabra.</p>
+        </div>
+        <div class="scramble-streak">Racha: <span id="scrambleStreakText">0 🔥</span></div>
+      </div>
+
+      <div class="scramble-card">
+        <div class="scramble-meaning" id="scrambleTargetMeaning">...</div>
+        <div class="scramble-category-badge" id="scrambleCategoryBadge">Catégorie</div>
+
+        <div class="scramble-slots" id="scrambleSlots"></div>
+        <div class="scramble-pool" id="scramblePool"></div>
+
+        <div class="scramble-feedback" id="scrambleFeedback" style="display: none;"></div>
+
+        <div class="scramble-actions">
+          <button class="btn-icon-action" id="btnScrambleClear" title="Reiniciar palabra">↺ Effacer</button>
+          <button class="action-btn" id="btnScrambleNext" style="display: none; margin-top: 0;">Mot suivant ➔</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTRARRELOJ -->
+    <section class="timeattack-section module-section" id="timeAttackSection" style="display: none;">
+      <div id="taLobby" class="ta-card">
+        <div class="ta-icon-hero">⏱️</div>
+        <h3>Défi Contre-la-Montre</h3>
+        <p class="section-desc">¿Cuántas palabras puedes acertar en 60 segundos? Responde a toda velocidad.</p>
+        
+        <div class="ta-best-badge">
+          Mejor marca: <span id="taBestScoreText">0</span> aciertos 🏆
+        </div>
+
+        <button class="action-btn" id="btnTaStart" style="margin-top: 20px;">
+          🚀 Lancer le défi (60s) !
+        </button>
+      </div>
+
+      <div id="taGame" class="ta-card" style="display: none;">
+        <div class="ta-top-hud">
+          <div class="ta-timer-badge">⏳ <span id="taSeconds">60</span>s</div>
+          <div class="ta-score-badge">Points: <span id="taCurrentScore">0</span></div>
+        </div>
+
+        <div class="ta-progress-track">
+          <div class="ta-progress-fill" id="taProgressFill"></div>
+        </div>
+
+        <div class="ta-question-box">
+          <div class="ta-word-fr" id="taWordFr">...</div>
+          <div class="ta-word-phonetic" id="taWordPhonetic">...</div>
+        </div>
+
+        <div class="ta-options-grid" id="taOptions"></div>
+      </div>
+
+      <div id="taSummary" class="ta-card" style="display: none;">
+        <div class="ta-icon-hero">🎉</div>
+        <h3>Temps Écoulé !</h3>
+        <p id="taNewRecordMsg" class="ta-record-alert" style="display: none;">🏆 NOUVEAU RECORD PERSONNEL !</p>
+
+        <div class="ta-summary-stats">
+          <div class="ta-stat-box">
+            <span class="ta-stat-num" id="taFinalScore">0</span>
+            <span class="ta-stat-lbl">Aciertos</span>
+          </div>
+          <div class="ta-stat-box">
+            <span class="ta-stat-num" id="taFinalMistakes">0</span>
+            <span class="ta-stat-lbl">Errores</span>
+          </div>
+          <div class="ta-stat-box">
+            <span class="ta-stat-num" id="taFinalAccuracy">0%</span>
+            <span class="ta-stat-lbl">Precisión</span>
+          </div>
+        </div>
+
+        <div class="ta-actions-row">
+          <button class="action-btn" id="btnTaRetry">🔄 Rejouer</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEDALLAS -->
+    <section class="achievements-section module-section" id="achievementsSection" style="display: none;">
+      <div class="achievements-card">
+        <div class="achievements-header">
+          <div>
+            <h3>🏅 Vitrine de Trophées</h3>
+            <p class="section-desc">Completa desafíos en los distintos modos para desbloquearlas.</p>
+          </div>
+          <div class="achievements-progress-badge">
+            <span id="unlockedBadgesCount">0 / 8</span>
+          </div>
+        </div>
+
+        <div class="badges-grid" id="achievementsGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTÓN FLOTANTE ALFABETO FRANCÉS -->
+  <button class="fab-alphabet" id="btnOpenAlphabetModal" title="Alphabet et Prononciation">
+    🇫🇷
+  </button>
+
+  <!-- MODAL ALFABETO Y ACENTOS -->
+  <div class="modal-backdrop" id="alphabetModalBackdrop"></div>
+  <div class="alphabet-modal" id="alphabetModal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <h3>Alphabet & Accents Français</h3>
+        <p>Toca para escuchar la pronunciación auténtica</p>
+      </div>
+      <button class="btn-modal-close" id="btnCloseAlphabetModal">✕</button>
+    </div>
+    <div class="alphabet-grid" id="alphabetGrid"></div>
+  </div>
+
+  <script type="module" src="js/app.js?v=1.0"></script>
+</body>
+  </html>
+  
